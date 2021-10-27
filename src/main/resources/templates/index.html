@@ -5,6 +5,9 @@
     <title>Документы</title>
 </head>
 <body>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Выйти"/>
+    </form>
     <h1 th:text="${text}"></h1>
 </body>
 </html>
