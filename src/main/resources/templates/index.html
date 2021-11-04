@@ -8,6 +8,27 @@
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Выйти"/>
     </form>
-    <h1 th:text="${text}"></h1>
+
+    <h1 th:text="${login}"></h1>
+
+    <h2>Submitted File</h2>
+    <table>
+        <tr>
+            <td>OriginalFileName:</td>
+            <td th:text="${file?.originalFilename}"></td>
+        </tr>
+        <tr>
+            <td>Type:</td>
+            <td th:text="${file?.contentType}"></td>
+        </tr>
+    </table>
+
+    <form method="POST" th:action="@{files/upload}" enctype="multipart/form-data">
+        <label>
+            Выберете файл для загрузки:
+            <input type="file" name="file" />
+        </label>
+        <input type="submit" value="Submit" />
+    </form>
 </body>
 </html>
