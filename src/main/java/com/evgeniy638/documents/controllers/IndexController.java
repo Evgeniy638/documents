@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Controller
@@ -25,8 +26,8 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    public String index(Model model) {
-        model.addAttribute("text", "Текст");
+    public String index(Model model, HttpServletRequest request) {
+        model.addAttribute("login", request.getUserPrincipal().getName());
         return "index";
     }
 

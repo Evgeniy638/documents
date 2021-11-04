@@ -1,4 +1,4 @@
-package com.evgeniy638.documents;
+package com.evgeniy638.documents.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(detailsService).passwordEncoder(encoder());
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(getPasswordEncoder())
@@ -36,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/registration", "/home").permitAll()
+                    .antMatchers("/registration").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()
