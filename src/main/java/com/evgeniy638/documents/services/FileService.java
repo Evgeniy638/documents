@@ -58,27 +58,33 @@ public class FileService {
             fileDTO.setUsernames(new ArrayList<>());
         }
 
-        FileMod fileMod = new FileMod();
+        for(MultipartFile multipartFile: fileDTO.getFiles()) {
 
-        List<String> usernames = fileDTO.getUsernames();
-        usernames.add(creatorUsername);
+            FileMod fileMod = new FileMod();
 
-        fileMod.setName(fileDTO.getFile().getOriginalFilename());
-        fileMod.setUsers(findUsersByUsernames(usernames));
-        fileMod.setGroups(findGroupsByTitles(fileDTO.getGroupTitles()));
-        fileMod.setInstitutions(findInstitutesByTitles(fileDTO.getInstitutionTitles()));
+            fileMod.setName(multipartFile.getOriginalFilename());
+            fileMod.setUsers(findUsersByUsernames(fileDTO.getUsernames()));
+            fileMod.setCreatorUsername(creatorUsername);
+            fileMod.setGroups(findGroupsByTitles(fileDTO.getGroupTitles()));
+            fileMod.setInstitutions(findInstitutesByTitles(fileDTO.getInstitutionTitles()));
 
-        FileMod savedFileMod = fileModRepository.save(fileMod);
+            FileMod savedFileMod = fileModRepository.save(fileMod);
 
-        saveFile(
-                fileDTO.getFile(),
-                savedFileMod.getId().toString() + getPostfix(fileMod.getName())
-        );
+            saveFile(
+                    multipartFile,
+                    savedFileMod.getId().toString() + getPostfix(fileMod.getName())
+            );
+        }
     }
 
     public List<SentFileDTO> getSentFiles(String username) {
         List<SentFileDTO> sentFileDTOS = new ArrayList<>();
-        Set<FileMod> sentFiles = userRepository.findByUsername(username).getFile();
+        List<FileMod> sentFiles = fileModRepository.findByCreatorUsername(username);
+
+        if (sentFiles == null) {
+            return sentFileDTOS;
+        }
+
 
         for (FileMod file: sentFiles) {
             SentFileDTO sentFileDTO = new SentFileDTO();

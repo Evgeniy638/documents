@@ -53,7 +53,4 @@ public class User {
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<FileMod> file;
-
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<FileMod> createdFiles;
 }

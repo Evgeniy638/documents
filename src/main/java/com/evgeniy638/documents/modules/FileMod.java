@@ -31,8 +31,8 @@ public class FileMod {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
-    private User creator;
+    @Column(name = "creator")
+    private String creatorUsername;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "files_institutions",

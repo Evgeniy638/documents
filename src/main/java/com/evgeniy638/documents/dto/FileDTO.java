@@ -10,5 +10,5 @@ public class FileDTO {
     private List<String> institutionTitles;
     private List<String> groupTitles;
     private List<String> usernames;
-    private MultipartFile file;
+    private List<MultipartFile> files;
 }
