@@ -9,7 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByUsername(String username);
-
-    @Query("SELECT usr FROM User usr")
-    User findBySessionId(@Param("sessionId") String sessionId);
 }
