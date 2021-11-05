@@ -48,7 +48,7 @@ public class IndexController {
 
         user.setActive(true);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Collections.singleton(Role.USER));
+        user.setRoles(Collections.singleton(Role.STUDENT));
         userService.save(user);
 
         return "redirect:/login";

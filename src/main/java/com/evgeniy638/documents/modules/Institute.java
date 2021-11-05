@@ -26,7 +26,7 @@ public class Institute {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "title")
+    @Column(name = "title", unique = true)
     private String title;
 
     @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

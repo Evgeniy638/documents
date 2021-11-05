@@ -1,5 +1,6 @@
 package com.evgeniy638.documents.configs;
 
+import com.evgeniy638.documents.modules.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +25,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .passwordEncoder(getPasswordEncoder())
-                .usersByUsernameQuery("select username, password, active from usr where username=?")
-                .authoritiesByUsernameQuery("select u.username, ur.roles from usr u inner join user_role ur on ur.user_id=u.id where u.username=?");
+        auth
+                .jdbcAuthentication()
+                    .dataSource(dataSource)
+                    .passwordEncoder(getPasswordEncoder())
+                    .usersByUsernameQuery("select username, password, active from usr where username=?")
+                    .authoritiesByUsernameQuery("select u.username, ur.roles from usr u inner join user_role ur on ur.user_id=u.id where u.username=?")
+                .and()
+                .inMemoryAuthentication()
+                    .withUser("root").password(getPasswordEncoder().encode("root"))
+                    .authorities(Role.ADMIN.toString());
     }
 
     @Override
@@ -36,6 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/registration").permitAll()
+                    .antMatchers("/home").hasAuthority(Role.STUDENT.toString())
+                    .antMatchers("/admin/**").hasAuthority(Role.ADMIN.toString())
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

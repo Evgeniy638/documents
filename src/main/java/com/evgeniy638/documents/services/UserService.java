@@ -1,18 +1,24 @@
 package com.evgeniy638.documents.services;
 
+import com.evgeniy638.documents.dto.StudentDTO;
+import com.evgeniy638.documents.modules.Group;
+import com.evgeniy638.documents.modules.Role;
 import com.evgeniy638.documents.modules.User;
+import com.evgeniy638.documents.repository.GroupRepository;
 import com.evgeniy638.documents.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final GroupRepository groupRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Возвращает пользователя по логину
@@ -29,6 +35,20 @@ public class UserService {
      * @param user
      */
     public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void createStudent(StudentDTO studentDTO) {
+        User user = new User();
+        Group group = groupRepository.findByTitle(studentDTO.getTitleGroup());
+
+        user.setUsername(studentDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+        user.setFullName(studentDTO.getFullName());
+        user.setGroup(group);
+        user.setActive(true);
+        user.setRoles(Collections.singleton(Role.STUDENT));
+
         userRepository.save(user);
     }
 }
