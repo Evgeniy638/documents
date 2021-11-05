@@ -3,6 +3,7 @@ package com.evgeniy638.documents.controllers;
 import com.evgeniy638.documents.dto.GroupDTO;
 import com.evgeniy638.documents.dto.InstituteDTO;
 import com.evgeniy638.documents.dto.StudentDTO;
+import com.evgeniy638.documents.modules.User;
 import com.evgeniy638.documents.services.GroupService;
 import com.evgeniy638.documents.services.InstituteService;
 import com.evgeniy638.documents.services.UserService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
@@ -23,12 +26,15 @@ public class AdminController {
     private final UserService userService;
 
     @GetMapping
-    public String admin(Model model) {
+    public String admin(Model model, HttpServletRequest request) {
         model.addAttribute("newInstitute", new InstituteDTO());
         model.addAttribute("newGroup", new GroupDTO());
         model.addAttribute("newStudent", new StudentDTO());
 
         model.addAttribute("institutes", instituteService.getInstitutes());
+        model.addAttribute("groups", groupService.getGroups());
+        model.addAttribute("users", userService.getUsers());
+        model.addAttribute("adminUsername", request.getUserPrincipal().getName());
 
         return "admin";
     }

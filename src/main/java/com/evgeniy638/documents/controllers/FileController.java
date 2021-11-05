@@ -1,13 +1,16 @@
 package com.evgeniy638.documents.controllers;
 
+import com.evgeniy638.documents.dto.FileDTO;
 import com.evgeniy638.documents.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller()
 @RequestMapping("/files")
@@ -20,9 +23,17 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String upload(@RequestParam("file") MultipartFile file) {
-        System.out.println(file.getOriginalFilename());
-        fileService.save(file);
-        return "redirect:/home";
+    public String upload(@ModelAttribute FileDTO fileDTO, HttpServletRequest request) {
+        fileService.save(fileDTO, request.getUserPrincipal().getName());
+        return "redirect:" + request.getHeader("Referer");
+    }
+
+    @GetMapping("/sent")
+    public String index(Model model, HttpServletRequest request) {
+        String username = request.getUserPrincipal().getName();
+
+        model.addAttribute("username", username);
+        model.addAttribute("files", fileService.getSentFiles(username));
+        return "sentFiles";
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,5 +51,9 @@ public class UserService {
         user.setRoles(Collections.singleton(Role.STUDENT));
 
         userRepository.save(user);
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 }

@@ -9,19 +9,53 @@
     <input type="submit" value="Выйти"/>
 </form>
 
+<span th:text="${adminUsername}"></span>
+
 <h1>Административаная панель</h1>
 
 <section>
-    <h2>Институты</h2>
+    <h2>Отправить файлы</h2>
 
-    <h3>Создание института</h3>
+    <form method="POST" th:action="@{files/upload}" enctype="multipart/form-data">
+        <label>
+            Выберете институты:
+            <select size="4" multiple name="institutionTitles">
+                <option th:each="ins :${institutes}" th:value="${ins.getTitle()}" th:text="${ins.getTitle()}"></option>
+            </select>
+        </label><br>
+        <label>
+            Выберете группы:
+            <select size="4" multiple name="groupTitles">
+                <option th:each="group :${groups}" th:value="${group.getTitle()}" th:text="${group.getTitle()}"></option>
+            </select>
+        </label><br>
+        <label>
+            Выберете студентов:
+            <select size="4" multiple name="usernames">
+                <option
+                        th:each="user :${users}"
+                        th:value="${user.getUsername()}"
+                >
+                    <span th:text="${user.getUsername()}"></span>:
+                    <span th:text="${user.getFullName()}"></span>
+                </option>
+            </select>
+        </label><br>
+        <label>
+            Выберете файл для загрузки:
+            <input type="file" name="file" />
+        </label><br>
+        <input type="submit" value="Создать" />
+    </form>
+
+    <h2>Создание института</h2>
 
     <form th:action="@{/admin/institute}" th:method="post" th:object="${newInstitute}">
         <div><label> Название института: <input type="text" th:field="*{title}"/> </label></div>
         <div><input type="submit" value="Создать"/></div>
     </form>
 
-    <h3>Создание группы</h3>
+    <h2>Создание группы</h2>
 
     <form th:action="@{/admin/group}" th:method="post" th:object="${newGroup}">
         <div><label> Название группы: <input type="text" th:field="*{titleGroup}"/> </label></div>
@@ -29,7 +63,7 @@
         <div><input type="submit" value="Создать"/></div>
     </form>
 
-    <h3>Создание студента</h3>
+    <h2>Создание студента</h2>
 
     <form th:action="@{/admin/student}" th:method="post" th:object="${newStudent}">
         <div><label> Логин: <input type="text" th:field="*{username}"/> </label></div>
@@ -39,7 +73,7 @@
         <div><input type="submit" value="Создать"/></div>
     </form>
 
-    <h3>Список институтов и групп</h3>
+    <h2>Список институтов и групп</h2>
 
     <ul>
         <li th:each="ins :${institutes}">
