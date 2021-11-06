@@ -1,5 +1,6 @@
 package com.evgeniy638.documents.controllers;
 
+import com.evgeniy638.documents.dto.ChangePasswordDTO;
 import com.evgeniy638.documents.modules.Role;
 import com.evgeniy638.documents.modules.User;
 import com.evgeniy638.documents.services.UserService;
@@ -31,25 +32,20 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("/registration")
+    @GetMapping("/change-pass")
     public String registration(Model model) {
-        model.addAttribute("user", new User());
-        return "registration";
+        model.addAttribute("user", new ChangePasswordDTO());
+        return "changePass";
     }
 
-    @PostMapping("/registration")
-    public String addUser(@ModelAttribute("user") User user, Model model) {
-        User userFromDB = userService.getUser(user.getUsername());
-
-        if (userFromDB != null) {
-            model.addAttribute("error", "такой пользователь уже есть");
-            return "registration";
+    @PostMapping("/change-pass")
+    public String addUser(@ModelAttribute("user") ChangePasswordDTO user, Model model) {
+        try {
+            userService.changePassword(user);
+        } catch (Error e) {
+            model.addAttribute("error", e.getMessage());
+            return "changePass";
         }
-
-        user.setActive(true);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Collections.singleton(Role.STUDENT));
-        userService.save(user);
 
         return "redirect:/login";
     }

@@ -1,5 +1,6 @@
 package com.evgeniy638.documents.services;
 
+import com.evgeniy638.documents.dto.ChangePasswordDTO;
 import com.evgeniy638.documents.dto.StudentDTO;
 import com.evgeniy638.documents.modules.Group;
 import com.evgeniy638.documents.modules.Role;
@@ -36,6 +37,23 @@ public class UserService {
      * @param user
      */
     public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        User user = userRepository.findByUsername(changePasswordDTO.getUsername());
+
+        if (user == null ||
+                !passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new Error("Неверный логин или пароль");
+        }
+
+        if (!changePasswordDTO.getNewPassword1().equals(changePasswordDTO.getNewPassword2())) {
+            throw new Error("Новые пароли должны совпадать");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword1()));
+
         userRepository.save(user);
     }
 
