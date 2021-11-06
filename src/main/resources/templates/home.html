@@ -9,26 +9,13 @@
         <input type="submit" value="Выйти"/>
     </form>
 
-    <h1 th:text="${login}"></h1>
+    <h1 th:text="${username}"></h1>
 
-    <h2>Submitted File</h2>
-    <table>
-        <tr>
-            <td>OriginalFileName:</td>
-            <td th:text="${file?.originalFilename}"></td>
-        </tr>
-        <tr>
-            <td>Type:</td>
-            <td th:text="${file?.contentType}"></td>
-        </tr>
-    </table>
+    <div th:replace="fragments/formFile :: formFile"></div>
 
-    <form method="POST" th:action="@{files/upload}" enctype="multipart/form-data">
-        <label>
-            Выберете файл для загрузки:
-            <input type="file" name="file" />
-        </label>
-        <input type="submit" value="Submit" />
-    </form>
+    <section th:replace="fragments/tableFilesInfo :: info(${userFiles}, 'Личные')"></section>
+    <section th:replace="fragments/tableFilesInfo :: info(${groupFiles}, ${user.getGroup().getTitle()})"></section>
+    <section th:replace="fragments/tableFilesInfo :: info(${institutionFiles}, ${user.getGroup().getInstitute().getTitle()})"></section>
+
 </body>
 </html>

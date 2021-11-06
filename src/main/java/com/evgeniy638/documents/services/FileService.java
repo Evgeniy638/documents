@@ -1,6 +1,7 @@
 package com.evgeniy638.documents.services;
 
 import com.evgeniy638.documents.dto.FileDTO;
+import com.evgeniy638.documents.dto.FileInfoDTO;
 import com.evgeniy638.documents.dto.SentFileDTO;
 import com.evgeniy638.documents.modules.FileMod;
 import com.evgeniy638.documents.modules.Group;
@@ -20,7 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +38,8 @@ public class FileService {
 
     @Value("${app.path.upload.file}")
     private String uploadPath;
+
+    private SimpleDateFormat formatForDateNow = new SimpleDateFormat("hh:mm dd.MM.yyyy");
 
     @PostConstruct
     public void init() {
@@ -63,6 +68,7 @@ public class FileService {
             FileMod fileMod = new FileMod();
 
             fileMod.setName(multipartFile.getOriginalFilename());
+            fileMod.setCreationTime(new Date());
             fileMod.setUsers(findUsersByUsernames(fileDTO.getUsernames()));
             fileMod.setCreatorUsername(creatorUsername);
             fileMod.setGroups(findGroupsByTitles(fileDTO.getGroupTitles()));
@@ -85,9 +91,12 @@ public class FileService {
             return sentFileDTOS;
         }
 
-
         for (FileMod file: sentFiles) {
             SentFileDTO sentFileDTO = new SentFileDTO();
+
+            if (file.getCreationTime() != null) {
+                sentFileDTO.setDate(formatForDateNow.format(file.getCreationTime()));
+            }
 
             sentFileDTO.setName(file.getName());
             sentFileDTO.setUrl("/upload-files/" + file.getId().toString() + getPostfix(file.getName()));
@@ -99,6 +108,26 @@ public class FileService {
         }
 
         return sentFileDTOS;
+    }
+
+    public Set<FileInfoDTO> convertFileModToFileInfo(Set<FileMod> files) {
+        Set<FileInfoDTO> fileInfoDTOS = new HashSet<>();
+
+        for(FileMod file: files) {
+            FileInfoDTO fileInfoDTO = new FileInfoDTO();
+
+            fileInfoDTO.setCreator(file.getCreatorUsername());
+            fileInfoDTO.setName(file.getName());
+            fileInfoDTO.setUrl("/upload-files/" + file.getId().toString() + getPostfix(file.getName()));
+
+            if (file.getCreationTime() != null) {
+                fileInfoDTO.setDate(formatForDateNow.format(file.getCreationTime()));
+            }
+
+            fileInfoDTOS.add(fileInfoDTO);
+        }
+
+        return fileInfoDTOS;
     }
 
     private String getStringListUsers(Set<User> users) {
@@ -178,6 +207,11 @@ public class FileService {
 
     private String getPostfix(String originalName) {
         int indexPoint = originalName.lastIndexOf(".");
+
+        if (indexPoint == -1) {
+            return "";
+        }
+
         return originalName.substring(indexPoint);
     }
 }

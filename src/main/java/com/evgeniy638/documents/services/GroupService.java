@@ -3,6 +3,7 @@ package com.evgeniy638.documents.services;
 import com.evgeniy638.documents.dto.GroupDTO;
 import com.evgeniy638.documents.modules.Group;
 import com.evgeniy638.documents.modules.Institute;
+import com.evgeniy638.documents.modules.User;
 import com.evgeniy638.documents.repository.GroupRepository;
 import com.evgeniy638.documents.repository.InstituteRepository;
 import lombok.RequiredArgsConstructor;

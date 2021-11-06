@@ -32,7 +32,7 @@ public class Institute {
     @OneToMany(mappedBy = "institute", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Group> groups;
 
-    @ManyToMany(mappedBy = "institutions")
+    @ManyToMany(mappedBy = "institutions", fetch = FetchType.EAGER)
     private Set<FileMod> file;
 
     public void addGroup(Group group) {

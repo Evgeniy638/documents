@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<section th:fragment="info(files, title)">
+    <h2 th:text="${title}"></h2>
+
+    <span th:if="${files.size() == 0}">Пусто</span>
+
+    <table th:if="${files.size() > 0}">
+        <tbody>
+        <tr th:each="file: ${files}">
+            <td>
+                <a
+                        th:text="${file.getName()}"
+                        th:href="@{{url} (url = ${file.getUrl()})}">
+                </a>
+            </td>
+            <td th:text="${file.getCreator()}"></td>
+            <td th:text="${file.getDate()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

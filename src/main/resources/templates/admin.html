@@ -16,37 +16,7 @@
 <section>
     <h2>Отправить файлы</h2>
 
-    <form method="POST" th:action="@{files/upload}" enctype="multipart/form-data">
-        <label>
-            Выберете институты:
-            <select size="4" multiple name="institutionTitles">
-                <option th:each="ins :${institutes}" th:value="${ins.getTitle()}" th:text="${ins.getTitle()}"></option>
-            </select>
-        </label><br>
-        <label>
-            Выберете группы:
-            <select size="4" multiple name="groupTitles">
-                <option th:each="group :${groups}" th:value="${group.getTitle()}" th:text="${group.getTitle()}"></option>
-            </select>
-        </label><br>
-        <label>
-            Выберете студентов:
-            <select size="4" multiple name="usernames">
-                <option
-                        th:each="user :${users}"
-                        th:value="${user.getUsername()}"
-                >
-                    <span th:text="${user.getUsername()}"></span>:
-                    <span th:text="${user.getFullName()}"></span>
-                </option>
-            </select>
-        </label><br>
-        <label>
-            Выберете файл для загрузки:
-            <input type="file" name="files" multiple />
-        </label><br>
-        <input type="submit" value="Создать" />
-    </form>
+    <div th:replace="fragments/formFile :: formFile"></div>
 
     <h2>Создание института</h2>
 
