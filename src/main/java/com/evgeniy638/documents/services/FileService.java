@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +28,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +74,7 @@ public class FileService {
             fileMod.setCreationTime(new Date());
             fileMod.setUsers(findUsersByUsernames(fileDTO.getUsernames()));
             fileMod.setCreatorUsername(creatorUsername);
+            fileMod.setCreatorUsernameConnection(creatorUsername);
             fileMod.setGroups(findGroupsByTitles(fileDTO.getGroupTitles()));
             fileMod.setInstitutions(findInstitutesByTitles(fileDTO.getInstitutionTitles()));
 
@@ -85,7 +89,7 @@ public class FileService {
 
     public List<SentFileDTO> getSentFiles(String username) {
         List<SentFileDTO> sentFileDTOS = new ArrayList<>();
-        List<FileMod> sentFiles = fileModRepository.findByCreatorUsername(username);
+        List<FileMod> sentFiles = fileModRepository.findByCreatorUsernameConnection(username);
 
         if (sentFiles == null) {
             return sentFileDTOS;
@@ -99,6 +103,7 @@ public class FileService {
             }
 
             sentFileDTO.setName(file.getName());
+            sentFileDTO.setUuid(file.getId());
             sentFileDTO.setUrl("/upload-files/" + file.getId().toString() + getPostfix(file.getName()));
             sentFileDTO.setListUsers(getStringListUsers(file.getUsers()));
             sentFileDTO.setListInstitute(getStringListInstitutes(file.getInstitutions()));
@@ -116,6 +121,7 @@ public class FileService {
         for(FileMod file: files) {
             FileInfoDTO fileInfoDTO = new FileInfoDTO();
 
+            fileInfoDTO.setUuid(file.getId());
             fileInfoDTO.setCreator(file.getCreatorUsername());
             fileInfoDTO.setName(file.getName());
             fileInfoDTO.setUrl("/upload-files/" + file.getId().toString() + getPostfix(file.getName()));
@@ -128,6 +134,58 @@ public class FileService {
         }
 
         return fileInfoDTOS;
+    }
+
+    @Transactional
+    public void deleteCreator(UUID fileId) {
+        FileMod fileMod = fileModRepository.getById(fileId);
+        fileMod.setCreatorUsernameConnection(null);
+        fileModRepository.save(fileMod);
+    }
+
+    @Transactional
+    public void deleteFromUser(int id, UUID fileId) {
+        FileMod fileMod = fileModRepository.getById(fileId);
+        Set<User> users = new HashSet<>();
+
+        for (User user: fileMod.getUsers()) {
+            if (user.getId() != id) {
+                users.add(user);
+            }
+        }
+
+        fileMod.setUsers(users);
+        fileModRepository.save(fileMod);
+    }
+
+    @Transactional
+    public void deleteFromGroup(int id, UUID fileId) {
+        FileMod fileMod = fileModRepository.getById(fileId);
+        Set<Group> groups = new HashSet<>();
+
+        for (Group group: fileMod.getGroups()) {
+            if (group.getId() != id) {
+                groups.add(group);
+            }
+        }
+
+        fileMod.setGroups(groups);
+        fileModRepository.save(fileMod);
+    }
+
+    @Transactional
+    public void deleteFromInstitute(int id, UUID fileId) {
+        FileMod fileMod = fileModRepository.getById(fileId);
+        Set<Institute> institutes = new HashSet<>();
+
+        for (Institute institute: fileMod.getInstitutions()) {
+            if (institute.getId() != id) {
+                institutes.add(institute);
+            }
+        }
+
+        fileMod.setInstitutions(institutes);
+        fileModRepository.save(fileMod);
     }
 
     private String getStringListUsers(Set<User> users) {

@@ -36,6 +36,9 @@ public class FileMod {
     @Column(name = "creator")
     private String creatorUsername;
 
+    @Column(name = "creator_connection")
+    private String creatorUsernameConnection;
+
     @Column(name = "creation_time")
     @Temporal(TemporalType.TIMESTAMP)
     Date creationTime;

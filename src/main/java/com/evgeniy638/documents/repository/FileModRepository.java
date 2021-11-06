@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface FileModRepository extends JpaRepository<FileMod, Integer> {
-    List<FileMod> findByCreatorUsername(String creatorUsername);
+public interface FileModRepository extends JpaRepository<FileMod, UUID> {
+    List<FileMod> findByCreatorUsernameConnection(String creatorUsername);
 }
