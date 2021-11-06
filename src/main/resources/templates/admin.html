@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Административаная панель</title>
+</head>
+<body>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Выйти"/>
+</form>
+
+<span th:text="${adminUsername}"></span>
+
+<a href="/files/sent">Отправленные</a>
+
+<h1>Административаная панель</h1>
+
+<section>
+    <h2>Отправить файлы</h2>
+
+    <div th:replace="fragments/formFile :: formFile"></div>
+
+    <h2>Создание института</h2>
+
+    <form th:action="@{/admin/institute}" th:method="post" th:object="${newInstitute}">
+        <div><label> Название института: <input type="text" th:field="*{title}"/> </label></div>
+        <div><input type="submit" value="Создать"/></div>
+    </form>
+
+    <h2>Создание группы</h2>
+
+    <form th:action="@{/admin/group}" th:method="post" th:object="${newGroup}">
+        <div><label> Название группы: <input type="text" th:field="*{titleGroup}"/> </label></div>
+        <div><label> Название института: <input type="text" th:field="*{titleInstitute}"/> </label></div>
+        <div><input type="submit" value="Создать"/></div>
+    </form>
+
+    <h2>Создание студента</h2>
+
+    <form th:action="@{/admin/student}" th:method="post" th:object="${newStudent}">
+        <div><label> Логин: <input type="text" th:field="*{username}"/> </label></div>
+        <div><label> ФИО: <input type="text" th:field="*{fullName}"/> </label></div>
+        <div><label> Временный пароль: <input type="password" th:field="*{password}"/> </label></div>
+        <div><label> Название группы: <input type="text" th:field="*{titleGroup}"/> </label></div>
+        <div><input type="submit" value="Создать"/></div>
+    </form>
+
+    <h2>Список институтов и групп</h2>
+
+    <ul>
+        <li th:each="ins :${institutes}">
+            <h4 th:text="${ins.getTitle()}"></h4>
+
+            <ul>
+                <li th:each="group :${ins.getGroups}">
+                    <span th:text="${group.getTitle()}"></span>
+
+                    <ul>
+                        <li th:each="student :${group.getUsers}">
+                            <span th:text="${student.getUsername()}"></span>
+                            :
+                            <span th:text="${student.getFullName()}"></span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+</section>
+
+</body>
+</html>

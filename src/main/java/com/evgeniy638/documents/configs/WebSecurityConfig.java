@@ -1,5 +1,6 @@
 package com.evgeniy638.documents.configs;
 
+import com.evgeniy638.documents.modules.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -24,22 +26,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .passwordEncoder(getPasswordEncoder())
-                .usersByUsernameQuery("select username, password, active from usr where username=?")
-                .authoritiesByUsernameQuery("select u.username, ur.roles from usr u inner join user_role ur on ur.user_id=u.id where u.username=?");
+        auth
+                .jdbcAuthentication()
+                    .dataSource(dataSource)
+                    .passwordEncoder(getPasswordEncoder())
+                    .usersByUsernameQuery("select username, password, active from usr where username=?")
+                    .authoritiesByUsernameQuery("select u.username, ur.roles from usr u inner join user_role ur on ur.user_id=u.id where u.username=?")
+                .and()
+                .inMemoryAuthentication()
+                    .withUser("root").password(getPasswordEncoder().encode("root"))
+                    .authorities(Role.ADMIN.toString());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/registration").permitAll()
+                    .antMatchers("/change-pass").permitAll()
+                    .antMatchers("/home").hasAuthority(Role.STUDENT.toString())
+                    .antMatchers("/admin/**").hasAuthority(Role.ADMIN.toString())
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/login")
+                    .successHandler(myAuthenticationSuccessHandler())
                     .permitAll()
                 .and()
                     .rememberMe()
@@ -51,5 +61,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+        return new MySimpleUrlAuthenticationSuccessHandler();
     }
 }

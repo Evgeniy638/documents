@@ -1,18 +1,26 @@
 package com.evgeniy638.documents.services;
 
+import com.evgeniy638.documents.dto.ChangePasswordDTO;
+import com.evgeniy638.documents.dto.StudentDTO;
+import com.evgeniy638.documents.modules.Group;
+import com.evgeniy638.documents.modules.Role;
 import com.evgeniy638.documents.modules.User;
+import com.evgeniy638.documents.repository.GroupRepository;
 import com.evgeniy638.documents.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final GroupRepository groupRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Возвращает пользователя по логину
@@ -30,5 +38,40 @@ public class UserService {
      */
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        User user = userRepository.findByUsername(changePasswordDTO.getUsername());
+
+        if (user == null ||
+                !passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new Error("Неверный логин или пароль");
+        }
+
+        if (!changePasswordDTO.getNewPassword1().equals(changePasswordDTO.getNewPassword2())) {
+            throw new Error("Новые пароли должны совпадать");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword1()));
+
+        userRepository.save(user);
+    }
+
+    public void createStudent(StudentDTO studentDTO) {
+        User user = new User();
+        Group group = groupRepository.findByTitle(studentDTO.getTitleGroup());
+
+        user.setUsername(studentDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+        user.setFullName(studentDTO.getFullName());
+        user.setGroup(group);
+        user.setActive(true);
+        user.setRoles(Collections.singleton(Role.STUDENT));
+
+        userRepository.save(user);
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 }

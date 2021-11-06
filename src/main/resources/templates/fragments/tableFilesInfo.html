@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<section th:fragment="info(files, title, deletePrefix)">
+    <h2 th:text="${title}"></h2>
+
+    <span th:if="${files.size() == 0}">Пусто</span>
+
+    <table th:if="${files.size() > 0}">
+        <tbody>
+        <tr>
+            <th>Название</th>
+            <th>Отправитель</th>
+            <th>Время создания</th>
+            <th></th>
+        </tr>
+        <tr th:each="file: ${files}">
+            <td>
+                <a
+                        th:text="${file.getName()}"
+                        th:href="@{{url} (url = ${file.getUrl()})}">
+                </a>
+            </td>
+            <td th:text="${file.getCreator()}"></td>
+            <td th:text="${file.getDate()}"></td>
+            <td>
+                <form
+                        th:method="delete"
+                        th:action="@{{url} (url = ${deletePrefix + '/' + file.getUuid()})}"
+                        style="display: inline"
+                >
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

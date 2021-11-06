@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Отправленные файлы</title>
+</head>
+<body>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Выйти"/>
+</form>
+
+<span th:text="${username}"></span>
+
+<h1>Отправленные файлы</h1>
+
+<span th:if="${files.size() == 0}">Пусто</span>
+
+<table th:if="${files.size() > 0}">
+  <tbody>
+    <tr>
+      <th>Название</th>
+      <th>Институты</th>
+      <th>Группы</th>
+      <th>Пользователи</th>
+      <th></th>
+    </tr>
+    <tr th:each="file: ${files}">
+        <td>
+            <a
+              th:text="${file.getName()}"
+              th:href="@{{url} (url = ${file.getUrl()})}">
+            </a>
+        </td>
+        <td th:text="${file.getListInstitute()}"></td>
+        <td th:text="${file.getListGroups()}"></td>
+        <td th:text="${file.getListUsers()}"></td>
+        <td>
+            <form
+                    th:method="delete"
+                    th:action="@{/files/creator/{id} (id = ${file.getUuid()})}"
+                    style="display: inline"
+            >
+                <button type="submit">Удалить</button>
+            </form>
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Сменить пароль</title>
+</head>
+<body>
+<div style="color: red" th:text="${error}"></div>
+<form th:action="@{/change-pass}" th:method="post" th:object="${user}">
+    <div><label> Логин: <input type="text" th:field="*{username}"/> </label></div>
+    <div><label> Старый пароль: <input type="password" th:field="*{oldPassword}"> </label></div>
+    <div><label> Новый пароль: <input type="password" th:field="*{newPassword1}"> </label></div>
+    <div><label> Повторите пароль: <input type="password" th:field="*{newPassword2}"> </label></div>
+    <div><input type="submit" value="Сменить пароль"/></div>
+</form>
+<a href="/login">Войти</a>
+</body>
+</html>

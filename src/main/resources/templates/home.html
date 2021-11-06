@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Документы</title>
+</head>
+<body>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Выйти"/>
+    </form>
+
+    <a href="/files/sent">Отправленные</a>
+
+    <h1 th:text="${username}"></h1>
+
+    <div th:replace="fragments/formFile :: formFile"></div>
+
+    <section
+            th:replace="fragments/tableFilesInfo :: info(${userFiles}, 'Личные', ${'/files/user/' + user.getId()})">
+    </section>
+
+    <section
+            th:replace="fragments/tableFilesInfo :: info(${groupFiles}, ${user.getGroup().getTitle()}, ${'/files/group/' + user.getGroup().getId()})">
+    </section>
+
+    <section
+            th:replace="fragments/tableFilesInfo :: info(${institutionFiles}, ${user.getGroup().getInstitute().getTitle()}, ${'/files/institute/' + user.getGroup().getInstitute().getId()})">
+    </section>
+
+</body>
+</html>
