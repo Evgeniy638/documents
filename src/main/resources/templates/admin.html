@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Административаная панель</title>
+    <link rel="stylesheet" href="/css/style.css"/>
 </head>
 <body>
 <form th:action="@{/logout}" method="post">
@@ -49,13 +50,13 @@
 
     <ul>
         <li th:each="ins :${institutes}">
-            <h4 th:text="${ins.getTitle()}"></h4>
+            <h4 th:text="${ins.getTitle()}" class="accordion accordion_hide"></h4>
 
-            <ul>
+            <ul class="panel">
                 <li th:each="group :${ins.getGroups}">
-                    <span th:text="${group.getTitle()}"></span>
+                    <span th:text="${group.getTitle()}" class="accordion accordion_hide"></span>
 
-                    <ul>
+                    <ul class="panel">
                         <li th:each="student :${group.getUsers}">
                             <span th:text="${student.getUsername()}"></span>
                             :
@@ -69,5 +70,6 @@
 
 </section>
 
+<script src="/js/accordion.js"></script>
 </body>
 </html>

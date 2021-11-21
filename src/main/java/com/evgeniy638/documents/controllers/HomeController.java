@@ -27,6 +27,10 @@ public class HomeController {
         String username = request.getUserPrincipal().getName();
         User user = userService.getUser(username);
 
+        if (user == null) {
+            return "logout";
+        }
+
         Set<FileInfoDTO> userFiles = fileService.convertFileModToFileInfo(user.getFile());
         Set<FileInfoDTO> groupFiles = fileService.convertFileModToFileInfo(user.getGroup().getFile());
         Set<FileInfoDTO> institutionFiles = fileService
