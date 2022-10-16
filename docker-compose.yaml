@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  documents_dbpostgress:
+    image: postgres
+#    volumes:
+      # - ./init.sql:/docker-entrypoint-initdb.d/10-init.sql
+#      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: root
+      POSTGRES_DB: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    command: -p 5433
+  app:
+    build:
+      context: .
+      dockerfile: pr3_t2.Dockerfile
+    depends_on:
+      - "documents_dbpostgress"
+    ports:
+      - 8080:8080
